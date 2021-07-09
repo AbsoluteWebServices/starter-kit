@@ -1,9 +1,7 @@
 var gulp = require('gulp'),
-	sass = require('gulp-sass'),
-	babel = require('gulp-babel'),
+	sass = require('gulp-sass')(require('node-sass')),
 	csso = require('gulp-csso'),
 	notify = require('gulp-notify'),
-	concat = require('gulp-concat'),
 	csssvg = require('gulp-css-svg'),
 	plumber = require('gulp-plumber'),
 	imagemin = require('gulp-imagemin'),
@@ -13,7 +11,6 @@ var gulp = require('gulp'),
 var folders = {
 	build: './build',
 	styles: './styles',
-	scripts: './scripts',
 	images: './images',
 };
 
@@ -25,8 +22,7 @@ var sources = {
 		'styles/blocks/*.scss',
 		'styles/elements/*.scss',
 		'styles/includes/*.scss'
-	],
-	scripts: 'scripts/*.js'
+	]
 };
 
 var options = {
@@ -53,10 +49,6 @@ var options = {
 			includeContent: false,
 			sourceRoot: '../styles/'
 		},
-		scripts: {
-			includeContent: false,
-			sourceRoot: '../scripts/'
-		},
 	},
 	browsersync: {
 		server: {
@@ -77,27 +69,6 @@ gulp.task('imagemin', function() {
 });
 
 
-gulp.task('scripts', function() {
-
-	return gulp.src(sources.scripts)
-		.pipe(plumber(options.plumber))
-		.pipe(sourcemaps.init())
-		.pipe(concat('scripts.js'))
-		.pipe(babel({
-			'presets': [
-				[require("@babel/preset-env"), {
-					debug: false,
-					useBuiltIns: false,
-				}]
-			],
-			'compact': true
-		}))
-		.pipe(sourcemaps.write('./', options.sourcemaps.scripts))
-		.pipe(gulp.dest(folders.build));
-
-});
-
-
 gulp.task('styles', function() {
 
 	return gulp.src(sources.style)
@@ -112,8 +83,11 @@ gulp.task('styles', function() {
 
 });
 
+gulp.task('build', function(cb) {
+	gulp.parallel('styles')();
+	cb();
+});
 
 gulp.task('default', function() {
 	gulp.watch(sources.styles, gulp.parallel('styles'));
-	gulp.watch(sources.scripts, gulp.parallel('scripts'));
 });

@@ -1,4 +1,4 @@
-function setCookie(name, value, exdays) {
+export function setCookie(name, value, exdays) {
 
 	var date = new Date();
 
@@ -12,7 +12,7 @@ function setCookie(name, value, exdays) {
 
 }
 
-function getCookie(name) {
+export function getCookie(name) {
 
 	name = name + '=';
 
